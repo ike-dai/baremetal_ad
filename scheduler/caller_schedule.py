@@ -9,7 +9,7 @@
 import os.path
 import sys
 import argparse
-import commands
+import subprocess
 
 from common.zabbix_api import ZabbixApi
 
@@ -33,12 +33,10 @@ def update_agent_conf(api_url, username, password, host_name, proxy_name):
     api.user_login()
     agent_ipaddress = api.get_interface_ipaddress(host_name, '1')
     proxy_ipaddress = api.get_interface_ipaddress(proxy_name, '1')
-    #commands.getoutput("/bin/sh " + self.path + "/action/update_agent_conf.sh " + agent_ipaddress + " " + proxy_ipaddress)
-    commands.getoutput("/bin/sh " + os.path.dirname(__file__) + "/action/update_agent_conf.sh " + agent_ipaddress + " " + proxy_ipaddress)
+
+    cmd = "/bin/sh %s/action/update_agent_conf.sh %s %s" % (os.path.abspath(os.path.dirname(__file__)), agent_ipaddress, proxy_ipaddress)
+    result = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     return True
-
-
-
 
 if __name__ == "__main__":
     args = get_args()
